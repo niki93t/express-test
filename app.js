@@ -19,14 +19,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // redirect to https://www.
-app.all(/.*/, function (req, res, next) {
-  var host = req.header("host");
-  if (host.match(/^www\..*/i)) {
-    next();
-  } else {
-    res.redirect(301, "https://www." + host);
-  }
-});
+// app.all(/.*/, function (req, res, next) {
+//   var host = req.header("host");
+//   if (host.match(/^www\..*/i)) {
+//     next();
+//   } else {
+//     res.redirect(301, "https://www." + host);
+//   }
+// });
 
 app.use(express.static(path.join(__dirname, "public")));
 
