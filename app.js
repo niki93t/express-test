@@ -5,6 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
+var testRouter = require("./routes/test");
 
 var app = express();
 
@@ -16,9 +17,32 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// redirect to https://www.
+app.all(/.*/, function (req, res, next) {
+  var host = req.header("host");
+  if (host.match(/^www\..*/i)) {
+    next();
+  } else {
+    res.redirect(301, "https://www." + host);
+  }
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
+// add trailing slashe to url
+app.use((req, res, next) => {
+  const test = /\?[^]*\//.test(req.url);
+  if (
+    req.url === "/" ||
+    (req.url.substr(-1) === "/" && req.url.length > 1 && !test)
+  )
+    next();
+  else res.redirect(301, `${req.url}/`);
+});
+
 app.use("/", indexRouter);
+app.use("/test", testRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
